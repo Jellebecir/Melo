@@ -1,15 +1,9 @@
 <template>
     <div>
-        <h1>Groups</h1>
-        <NuxtLink to="groups/create">Create group</NuxtLink>
-        <input
-            v-model="joinCode"
-            type="text"
-            placeholder="join code"
-            class="input"
-            required
-        >
-        <button @click="onJoinGroup">Join group</button>
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Groups</h1>
+            <UButton @click="onJoinGroup" class="btn btn-primary">Join group</UButton>
+        </div>
         <div v-if="loading">Loading...</div>
         <div v-else-if="error">{{ error.message }}</div>
         <div v-else-if="groups && groups.length">
@@ -30,31 +24,28 @@
 </template>
 
 <script lang="ts" setup>
+import { JoinModal } from '#components';
 
 const user = useSupabaseUser();
-const joinCode = ref('');
+const overlay = useOverlay();
+
+const joinModal = overlay.create(JoinModal);
 
 const {
     getUserGroups,
     loading,
     error,
     groups,
-    joinGroup,
-} = useGroups();
+} = useGroup();
 
 const onJoinGroup = () => {
-    if (joinCode.value) {
-        joinGroup(joinCode.value)
-            .then(() => {
-                // Redirect to the groups page after successful group creation
+    joinModal.open({
+        onClose: (success: boolean) => {
+            if (success) {
                 getUserGroups();
-            })
-            .catch((error) => {
-                console.error('Error joining group:', error);
-            });
-    } else {
-        console.error('Group name is required');
-    }
+            }
+        },
+    });
 };
 
 onMounted(() => {
@@ -62,5 +53,3 @@ onMounted(() => {
 });
 
 </script>
-
-<style></style>

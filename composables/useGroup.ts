@@ -1,4 +1,4 @@
-export const useGroups = () => {
+export const useGroup = () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
 
@@ -20,8 +20,6 @@ export const useGroups = () => {
         const { data, error: err } = await supabase
             .from("user_groups")
             .select("*")
-
-        console.log({ data });
 
         if (err) {
             error.value = err.message
@@ -47,27 +45,11 @@ export const useGroups = () => {
         await getUserGroups() // refresh the list
     }
 
-    const joinGroup = async (joinCode: string) => {
-        const { data, error } = await supabase
-            .rpc("join_group_by_code", { code: joinCode });
-
-        if (error) {
-            console.error(error);
-            return { success: false, error: error.message };
-        }
-
-        return {
-            success: true,
-            group: data?.[0] || null
-        };
-    };
-
     return {
         groups,
         loading,
         error,
         getUserGroups,
         createGroup,
-        joinGroup,
     }
 }

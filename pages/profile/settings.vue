@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+    This is the profile settings page.
   </div>
 </template>
 

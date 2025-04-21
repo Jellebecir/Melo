@@ -49,7 +49,6 @@ const show = ref(false);
 const password = ref('');
 
 const signIn = async () => {
-    console.log('Signing in with email:', email.value);
     const { error } = await supabase.auth.signInWithPassword({
         email: email.value,
         password: password.value,

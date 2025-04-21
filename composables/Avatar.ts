@@ -15,14 +15,12 @@ export const useAvatar = async (): Promise<UseAvatar> => {
   };
 
   if (!user.value) {
-    console.error("User is not logged in");
     return emptyAvatar;
   }
 
   const { data: profileData, error } = await supabase.from('profiles').select('id, full_name, avatar_url').eq('id', user.value.id).single()
 
   if (error) {
-    console.error("Error fetching profile:", error);
     return emptyAvatar;
   }
 

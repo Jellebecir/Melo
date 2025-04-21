@@ -13,7 +13,6 @@ const email = ref('');
 const password = ref('');
 
 const signUp = async () => {
-    console.log('Signing up with email:', email.value);
     const { error } = await supabase.auth.signUp({
         email: email.value,
         password: password.value,

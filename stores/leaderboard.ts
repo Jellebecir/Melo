@@ -1,17 +1,18 @@
+import { defineStore } from 'pinia'
 
-export const useGroupLeaderboard = (groupId: string) => {
+export const useLeaderboard = defineStore('leaderboard', () => {
     const supabase = useSupabaseClient();
 
     const leaderboard = ref<any[]>([]);
     const loading = ref(false);
     const error = ref<string | null>(null);
 
-    const getGroupLeaderboard = () => {
+    const getLeaderboard = (groupId: string) => {
         loading.value = true;
         supabase.rpc('get_group_leaderboard', { p_group_id: groupId })
             .then(({ data, error: fetchError }) => {
                 loading.value = false;
-                console.log("Leaderboard data:", data);
+
                 if (fetchError) {
                     error.value = fetchError.message;
                 } else {
@@ -22,11 +23,10 @@ export const useGroupLeaderboard = (groupId: string) => {
         );
     };
 
-    getGroupLeaderboard();
-
     return {
         leaderboard,
         loading,
         error,
+        getLeaderboard,
     }
-}
+})

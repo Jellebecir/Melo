@@ -13,7 +13,7 @@
                 <UButton 
                     color="primary" 
                     icon="i-heroicons-plus-circle" 
-                    @click=""
+                    @click="onRegisterMatch"
                 >
                     Register Match
                 </UButton>
@@ -33,10 +33,12 @@
 </template>
 
 <script lang="ts" setup>
+import { RegisterMatchModal } from '#components';
 
 const route = useRoute();
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
+const overlay = useOverlay();
 
 const groupId = route.params.id;
 const groupName = await supabase
@@ -45,53 +47,22 @@ const groupName = await supabase
     .eq("id", groupId)
     .single().then(({ data }) => data.name);
 
-const members = ref([]);
-const ratings = ref([]);
-const selectedMember = ref(null);
-const errorMessage = ref("");
-
-onMounted(async () => {
-    getOpponents();
+const matchRegisterModal = overlay.create(RegisterMatchModal, {
+    props: {
+        groupId: groupId,
+    },
 });
 
-const getOpponents = async () => {
-    const { data: opponents, error: opponentsError } = await supabase
-        .from("group_profiles")
-        .select("*")
-        .neq("id", user.value.id);
-
-    if (opponentsError) {
-        errorMessage.value = error.message;
-    } else {
-        members.value = opponents;
-    }
-};
-
-
-
-const registerMatch = async (groupId, player1Id, player2Id, winnerId) => {
-    const { data, error } = await supabase
-        .rpc('register_match', {
-            p_group_id: groupId,
-            p_player_1_id: player1Id,
-            p_player_2_id: player2Id,
-            p_winner_id: winnerId,
-        });
-
-    if (error) {
-        console.error('Error registering match:', error);
-    } else {
-        console.log('Match registered successfully:', data);
-    }
-};
-
 const onRegisterMatch = async () => {
-    const player1Id = user.value.id;
-    const player2Id = selectedMember.value;
-    const winnerId = selectedMember.value;
-
-    await registerMatch(groupId, player1Id, player2Id, winnerId);
+    const registered = await matchRegisterModal.open()
+    if (registered) {
+        useLeaderboard().getLeaderboard(groupId);
+    }
 };
+
+const copyJoinCode = () => {
+    console.warn("Implement Copy Join Code here...");
+}
 
 </script>
 

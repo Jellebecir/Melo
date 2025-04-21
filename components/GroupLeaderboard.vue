@@ -14,7 +14,12 @@ const groupId = route.params.id;
 const UAvatar = resolveComponent('UAvatar');
 const Icon = resolveComponent('Icon');
 
-const { leaderboard, loading } = useGroupLeaderboard(groupId);
+const { leaderboard, loading } = storeToRefs(useLeaderboard());
+const { getLeaderboard } = useLeaderboard();
+
+useAsyncData('leaderboard', () => {
+    getLeaderboard(groupId);
+});
 
 const getRowUserIcon = (row) => {
     const user = row.original;

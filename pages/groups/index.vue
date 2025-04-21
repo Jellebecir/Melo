@@ -1,42 +1,61 @@
 <template>
-    <div>
+    <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">Groups</h1>
-            <UButton @click="onJoinGroup" class="btn btn-primary">Join group</UButton>
+            <h1 class="text-2xl font-semibold">
+                Your Groups
+            </h1>
+            <div class="space-x-2">
+                <UButton 
+                    icon="i-heroicons-plus" 
+                    color="primary"
+                >
+                    Create Group
+                </UButton>
+                <UButton 
+                    icon="i-heroicons-key" 
+                    variant="outline"
+                    color="neutral"
+                    @click="joinModal.open"
+                >
+                    Join Group
+                </UButton>
+            </div>
         </div>
-        <div v-if="loading">Loading...</div>
-        <div v-else-if="error">{{ error.message }}</div>
-        <div v-else-if="groups && groups.length">
-            <ul>
-                <li v-for="group in groups" :key="group.id">
-                    <NuxtLink :to="`/groups/${group.id}`">
-                        {{ group.name }}
-                    </NuxtLink>
-                </li>
-            </ul>
+        <div 
+            v-if="loading" 
+            class="text-muted text-center py-8"
+        >
+            Loading your groups...
         </div>
-        <div v-else>
-            <p>No groups found.</p>
+        <div 
+            v-else-if="error" 
+            class="text-error-500 text-center py-8"
+        >
+            {{ error.message }}
         </div>
-        {{ user.email }}
-        {{ user.id }}
+        <div 
+            v-else-if="groups.length" 
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+            <GroupCard 
+                v-for="group in groups"
+                :key="group.id"
+                :group="group"
+            />
+        </div>
+        <div v-else class="text-muted text-center py-8">
+            You haven't joined any groups yet.
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { JoinModal } from '#components';
 
-const user = useSupabaseUser();
+const { groups, loading, error } = useGroupListing();
+
 const overlay = useOverlay();
-
 const joinModal = overlay.create(JoinModal);
-
-const {
-    getUserGroups,
-    loading,
-    error,
-    groups,
-} = useGroup();
 
 const onJoinGroup = () => {
     joinModal.open({
@@ -47,9 +66,5 @@ const onJoinGroup = () => {
         },
     });
 };
-
-onMounted(() => {
-    getUserGroups();
-});
 
 </script>

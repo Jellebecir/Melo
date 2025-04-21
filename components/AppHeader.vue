@@ -5,10 +5,23 @@
         <NuxtLink to="/groups">Groups</NuxtLink>
         <NuxtLink to="/profile">Profile</NuxtLink>
     </div>
-    <UDropdownMenu :items="menuItems" :ui="{ item: 'text-left' }">
-        <UButton color="gray" variant="ghost" class="flex items-center gap-2">
-            <UAvatar :src="avatar.avatar_url" size="xs" alt="User Avatar" />
-            <span class="hidden sm:block">{{ avatar.name }}</span>
+    <UDropdownMenu 
+        :items="menuItems" 
+        :ui="{ item: 'text-left' }"
+    >
+        <UButton 
+            color="gray" 
+            variant="ghost" 
+            class="flex items-center gap-2"
+        >
+            <UAvatar 
+                :src="avatar.avatar_url" 
+                size="xs" 
+                alt="User Avatar" 
+            />
+            <span class="hidden sm:block">
+                {{ avatar.name }}
+            </span>
             <Icon name="i-heroicons-chevron-down" />
         </UButton>
     </UDropdownMenu>
@@ -29,12 +42,7 @@ const logoutModal = overlay.create(ConfirmModal, {
     props: {
         title: 'Logout',
         description: 'Are you sure you want to logout?',
-    },
-    onClose: (confirm: boolean) => {
-        if (confirm) {
-            logout();
-        }
-    },
+    }
 });
 
 const toggleTheme = () => {
@@ -43,7 +51,14 @@ const toggleTheme = () => {
 
 const logout = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push('/auth/login');
+}
+
+const onLogout = async () => {
+    const shouldLogout = await logoutModal.open();
+    if (shouldLogout) {
+        await logout();
+    }
 }
 
 const menuItems = [
@@ -57,7 +72,7 @@ const menuItems = [
     [{
         label: 'Logout',
         icon: 'i-heroicons-arrow-left-on-rectangle',
-        onSelect: logoutModal.open,
+        onSelect: onLogout,
     }]
 ];
 

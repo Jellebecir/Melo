@@ -22,7 +22,7 @@ const signUp = async () => {
         console.error('Error signing up:', error.message);
     } else {
         // Redirect to the confirm page after successful signup
-        navigateTo('/confirm');
+        navigateTo('/auth/confirm');
     }
 };
 

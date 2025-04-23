@@ -7,13 +7,14 @@ export interface GroupListingItem {
     isOwner: boolean;
 }
 
-interface GroupListing {
+interface UseGroupListing {
     loading: Ref<boolean>;
     error: Ref<string | null>;
     groups: Ref<GroupListingItem[]>;
+    fetchGroups: () => Promise<void>;
 }
 
-export const useGroupListing = () => {
+export const useGroupListing = (): UseGroupListing => {
     const supabase = useSupabaseClient();
     const loading = ref(false);
     const error = ref<string | null>(null);
@@ -32,7 +33,7 @@ export const useGroupListing = () => {
         } else {
             groups.value = data || [];
         }
-        console.log({ data});
+        
         loading.value = false;
     };
 
@@ -42,5 +43,6 @@ export const useGroupListing = () => {
         loading,
         error,
         groups,
-    } as GroupListing;
+        fetchGroups
+    };
 }

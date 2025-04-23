@@ -8,6 +8,7 @@
                 <UButton 
                     icon="i-heroicons-plus" 
                     color="primary"
+                    @click="onCreateGroup"
                 >
                     Create Group
                 </UButton>
@@ -15,7 +16,7 @@
                     icon="i-heroicons-key" 
                     variant="outline"
                     color="neutral"
-                    @click="joinModal.open"
+                    @click="onJoinGroup"
                 >
                     Join Group
                 </UButton>
@@ -31,7 +32,7 @@
             v-else-if="error" 
             class="text-error-500 text-center py-8"
         >
-            {{ error.message }}
+            {{ error }}
         </div>
         <div 
             v-else-if="groups.length" 
@@ -50,21 +51,33 @@
 </template>
 
 <script lang="ts" setup>
-import { JoinModal } from '#components';
+import { JoinModal, CreateGroupModal } from '#components';
 
-const { groups, loading, error } = useGroupListing();
+const { groups, loading, error, fetchGroups } = useGroupListing();
 
+const router = useRouter();
 const overlay = useOverlay();
 const joinModal = overlay.create(JoinModal);
+const createModal = overlay.create(CreateGroupModal);
 
 const onJoinGroup = () => {
     joinModal.open({
         onClose: (success: boolean) => {
             if (success) {
-                getUserGroups();
+                fetchGroups();
             }
         },
     });
 };
+
+const onCreateGroup = () => {
+    createModal.open({
+        onClose: (createdGroupId: string) => {
+            if (createdGroupId) {
+                router.push(`/groups/${createdGroupId}`);
+            }
+        },
+    });
+}
 
 </script>

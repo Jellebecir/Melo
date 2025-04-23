@@ -40,7 +40,7 @@ const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const overlay = useOverlay();
 
-const groupId = route.params.id;
+const groupId = route.params.id as string;
 const groupName = await supabase
     .from("groups")
     .select("name")
@@ -60,9 +60,11 @@ const onRegisterMatch = async () => {
     }
 };
 
-const copyJoinCode = () => {
-    console.warn("Implement Copy Join Code here...");
-}
+const copyJoinCode = (code: string) => {
+    navigator.clipboard.writeText(code)
+    // Optional: show toast or confirmation
+    console.log(`Copied join code: ${code}`)
+};
 
 </script>
 

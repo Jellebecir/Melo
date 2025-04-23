@@ -17,7 +17,7 @@
       </template>
       <template #footer>
           <UButton 
-              @click="join(joinCode)"
+              @click="onJoinGroup"
               :loading="joinLoading"
               :disabled="!joinCode"
           >
@@ -30,17 +30,24 @@
 <script lang="ts" setup>
 
 const emit = defineEmits(['close']);
+const router = useRouter();
 const joinCode = ref(''); 
 
 const { 
     loading: joinLoading, 
     error: joinError, 
-    join,
-    onSuccess
+    joinGroup,
 } = useJoinGroup();
 
-onSuccess(() => {
-    emit('close', true);
-});
+const onJoinGroup = () => {
+    joinGroup(joinCode.value)
+        .then(groupId => {
+            console.log(`Joined group with ID: ${groupId}`);
+            if (groupId) {
+                router.push(`/groups/${groupId}`);
+                emit('close');
+            }
+        });
+}
 
 </script>

@@ -34,7 +34,7 @@
         <p>
             Don't have an account?
         </p>
-        <UButton to="auth/register">
+        <UButton to="/auth/register">
             Sign up
         </UButton>
     </div>

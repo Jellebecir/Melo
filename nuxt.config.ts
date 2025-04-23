@@ -15,18 +15,22 @@ export default defineNuxtConfig({
         },
     },
     modules: [
-        '@nuxt/ui',
-        '@nuxtjs/supabase',
-        '@nuxtjs/color-mode',
+      '@nuxt/ui',
+      '@nuxtjs/supabase',
+      '@nuxtjs/color-mode',
+      '@pinia/nuxt',
     ],
+    pinia: {
+        storesDirs: ['./stores/**'],
+    },
     supabase: {
         url: process.env.SUPABASE_URL,
         key: process.env.SUPABASE_KEY,
         redirectOptions: {
             login: '/auth/login',
-            callback: 'auth/confirm',
+            callback: '/auth/confirm',
             saveRedirectToCookie: true,
-            exclude: ['auth/login', 'auth/register'],
+            exclude: ['/auth/login', '/auth/register'],
         },
     },
 })

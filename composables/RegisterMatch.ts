@@ -27,6 +27,6 @@ export const useRegisterMatch = (): RegisterMatch => {
 
     return { 
         loading, 
-        registerMatch
+        registerMatch,
     };
 }

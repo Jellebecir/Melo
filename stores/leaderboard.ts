@@ -9,10 +9,9 @@ export const useLeaderboard = defineStore('leaderboard', () => {
 
     const getLeaderboard = (groupId: string) => {
         loading.value = true;
-        supabase.rpc('get_group_leaderboard', { p_group_id: groupId })
+        return supabase.rpc('get_group_leaderboard', { p_group_id: groupId })
             .then(({ data, error: fetchError }) => {
                 loading.value = false;
-
                 if (fetchError) {
                     error.value = fetchError.message;
                 } else {
@@ -20,7 +19,7 @@ export const useLeaderboard = defineStore('leaderboard', () => {
                     leaderboard.value = data;
                 }
             }
-        );
+        ) as Promise<void>;
     };
 
     return {

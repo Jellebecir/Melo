@@ -28,7 +28,8 @@
                 </UButton>
             </div>
         </div>
-        <GroupLeaderboard :groupId="groupId" />
+        <GroupLeaderboard />
+        <GroupMembers />
     </UContainer>
 </template>
 
@@ -37,15 +38,16 @@ import { RegisterMatchModal } from '#components';
 
 const route = useRoute();
 const supabase = useSupabaseClient();
-const user = useSupabaseUser();
 const overlay = useOverlay();
 
 const groupId = route.params.id as string;
-const groupName = await supabase
+const { data } = await supabase
     .from("groups")
-    .select("name")
+    .select("name, join_code")
     .eq("id", groupId)
-    .single().then(({ data }) => data.name);
+    .single();
+const groupName = data.name;
+const joinCode = data.join_code;
 
 const matchRegisterModal = overlay.create(RegisterMatchModal, {
     props: {
@@ -60,10 +62,10 @@ const onRegisterMatch = async () => {
     }
 };
 
-const copyJoinCode = (code: string) => {
-    navigator.clipboard.writeText(code)
+const copyJoinCode = () => {
+    navigator.clipboard.writeText(joinCode)
     // Optional: show toast or confirmation
-    console.log(`Copied join code: ${code}`)
+    console.log(`Copied join code: ${joinCode}`);
 };
 
 </script>

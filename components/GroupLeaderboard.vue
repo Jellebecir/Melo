@@ -9,37 +9,16 @@
 </template>
 
 <script lang="ts" setup>
+const ProfileCell = resolveComponent('ProfileCell');
 const route = useRoute();
-const groupId = route.params.id;
-const UAvatar = resolveComponent('UAvatar');
-const Icon = resolveComponent('Icon');
+const groupId = route.params.id as string;
 
 const { leaderboard, loading } = storeToRefs(useLeaderboard());
 const { getLeaderboard } = useLeaderboard();
 
 useAsyncData('leaderboard', () => {
-    getLeaderboard(groupId);
+    return getLeaderboard(groupId);
 });
-
-const getRowUserIcon = (row) => {
-    const user = row.original;
-    return h(UAvatar, {
-        src: user.avatar_url,
-        size: 'lg'
-    });
-};
-
-const getRowUserName = (row) => {
-    const user = row.original;
-    return h('p', undefined, user.name);
-};
-
-const getRowUser = (row) => {
-    return h('div', { class: 'flex items-center gap-3' }, [
-        getRowUserIcon(row),
-        getRowUserName(row)
-    ]);
-};
 
 const columns = [
     {
@@ -47,10 +26,12 @@ const columns = [
         header: "Rank",
     },
     {
-        accessorKey: "name",
         header: "Name",
         cell: ({ row }) => {
-            return getRowUser(row);
+            const user = row.original;
+            return h(ProfileCell, {
+                user
+            });
         }
     },
     {

@@ -63,7 +63,7 @@ const onLogout = async () => {
 
 const menuItems = [
     [{ label: 'Profile', icon: 'i-heroicons-user', to: '/profile' }],
-    [{ label: 'Settings', icon: 'i-heroicons-cog-6-tooth', to: 'profile/settings' }],
+    [{ label: 'Settings', icon: 'i-heroicons-cog-6-tooth', to: '/profile/settings' }],
     [{
         label: colorMode.preference === 'dark' ? 'Light Mode' : 'Dark Mode',
         icon: 'i-heroicons-moon',

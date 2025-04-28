@@ -32,7 +32,8 @@ interface Props {
     title: string;
     description: string;
 }
-const props = defineProps<Props>();
+
+defineProps<Props>();
 const emit = defineEmits<{ close: [boolean] }>();
 
 </script>

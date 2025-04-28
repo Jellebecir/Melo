@@ -29,13 +29,20 @@
 
 <script lang="ts" setup>
 import { ConfirmModal, RegisterMatchModal } from '#components';
+import { useGroupMemberStore } from '~/stores/groupMember';
 
 const route = useRoute();
+const groupId = route.params.id as string;
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const overlay = useOverlay();
+const { getActiveGroupMember } = useGroupMemberStore();
 
-const groupId = route.params.id as string;
+useAsyncData(() => {
+    const groupId = route.params.id as string;
+    return getActiveGroupMember(groupId);
+});
+
 const { data } = await supabase
     .from("groups")
     .select("name, join_code")

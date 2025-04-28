@@ -2,7 +2,7 @@
     <UCard>
         <template #header>
             <div class="flex items-center gap-2">
-                <Icon name="heroicons:chart-bar" size="1.5rem" />
+                <Icon name="heroicons:list-bullet-20-solid" size="1.5rem" />
                 <h2 class="text-lg font-semibold">Matches</h2>
                 <USwitch
                     v-if="matches.length > 0"

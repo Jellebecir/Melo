@@ -1,5 +1,11 @@
 <template>
     <UCard>
+        <template #header>
+            <div class="flex items-center gap-2">
+                <Icon name="heroicons:user-group-solid" size="1.5rem" />
+                <h2 class="text-lg font-semibold">Members</h2>
+            </div>
+        </template>
         <UTable 
             :data="members" 
             :columns="columns" 
@@ -9,26 +15,25 @@
 </template>
 
 <script lang="ts" setup>
+import { ConfirmModal } from '#components';
 import ProfileCell from './ProfileCell.vue';
 
 const Icon = resolveComponent('Icon');
+const UButton = resolveComponent('UButton');
 const supabase = useSupabaseClient();
+const overlay = useOverlay();
+const kickMemberModal = overlay.create(ConfirmModal, {
+    props: {
+        title: "Kick member",
+        description: "Are you sure you want to kick this member?",
+    },
+});
+
 const groupId = useRoute().params.id as string;
+const { groupMember } = storeToRefs(useGroupMemberStore());
+const { getGroupMembers, members, loading } = useGroupMembers();
 
-const members = ref([]);
-const loading = ref(true);
-
-supabase.from('group_member_overview')
-    .select("*")
-    .eq("group_id", groupId)
-    .then(({ data, error }) => {
-        if (error) {
-            console.error('Error fetching group members:', error);
-        } else {
-            members.value = data;
-        }
-        loading.value = false;
-    });
+getGroupMembers(groupId);
 
 const columns = [
     {
@@ -80,8 +85,42 @@ const columns = [
     },
 ];
 
+if (groupMember.value.role === 'Owner') {
+    columns.push({
+        header: "Actions",
+        cell: ({ row }) => {
+            const user = row.original;
+            if (user.user_id === groupMember.value.user_id) {
+                return h('div', { class: 'flex items-center' });
+            }
+            return h('div', { class: 'flex items-center' }, [
+                h(UButton, {
+                    icon: "i-heroicons-trash",
+                    variant: "ghost",
+                    color: "neutral",
+                    onClick: () => {
+                        // Handle delete action
+                        kickMemberModal.open()
+                            .then(async (confirmed) => {
+                                if (confirmed) {
+                                    const { error } = await supabase.rpc('remove_member_from_group', {
+                                        p_group_id: groupId,
+                                        p_user_id: user.user_id,
+                                    });
+
+                                    if (error) {
+                                        // Handle error (e.g., show a toast or alert)
+                                        console.error(error.message);
+                                    } else {
+                                        getGroupMembers(groupId);
+                                    }
+                                }
+                            });
+                    }
+                })
+            ]);
+        }
+    });
+}
+
 </script>
-
-<style>
-
-</style>

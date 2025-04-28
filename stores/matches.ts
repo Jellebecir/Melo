@@ -1,22 +1,22 @@
 import { defineStore } from 'pinia'
 
-export const useLeaderboard = defineStore('leaderboard', () => {
+export const useMatches = defineStore('matches', () => {
     const supabase = useSupabaseClient();
 
-    const leaderboard = ref<any[]>([]);
+    const matches = ref<any[]>([]);
     const loading = ref(false);
     const error = ref<string | null>(null);
 
-    const getLeaderboard = (groupId: string) => {
+    const getMatches = (groupId: string) => {
         loading.value = true;
-        return supabase.rpc('get_group_leaderboard', { p_group_id: groupId })
+        return supabase.rpc('get_group_match_history', { p_group_id: groupId })
             .then(({ data, error: fetchError }) => {
                 loading.value = false;
                 if (fetchError) {
                     error.value = fetchError.message;
                 } else {
                     error.value = null;
-                    leaderboard.value = data;
+                    matches.value = data;
                     return data;
                 }
             }
@@ -24,9 +24,9 @@ export const useLeaderboard = defineStore('leaderboard', () => {
     };
 
     return {
-        leaderboard,
+        matches,
         loading,
         error,
-        getLeaderboard,
+        getMatches,
     }
 })

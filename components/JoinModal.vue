@@ -42,7 +42,6 @@ const {
 const onJoinGroup = () => {
     joinGroup(joinCode.value)
         .then(groupId => {
-            console.log(`Joined group with ID: ${groupId}`);
             if (groupId) {
                 router.push(`/groups/${groupId}`);
                 emit('close');

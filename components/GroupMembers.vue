@@ -9,9 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { UAvatar } from '#components';
 import ProfileCell from './ProfileCell.vue';
-
 
 const Icon = resolveComponent('Icon');
 const supabase = useSupabaseClient();

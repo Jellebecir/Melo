@@ -30,6 +30,7 @@
         </div>
         <GroupLeaderboard />
         <GroupMembers />
+        <GroupMatches />
     </UContainer>
 </template>
 

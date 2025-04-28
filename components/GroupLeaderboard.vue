@@ -16,9 +16,7 @@ const groupId = route.params.id as string;
 const { leaderboard, loading } = storeToRefs(useLeaderboard());
 const { getLeaderboard } = useLeaderboard();
 
-useAsyncData('leaderboard', () => {
-    return getLeaderboard(groupId);
-});
+useAsyncData('leaderboard', () => getLeaderboard(groupId));
 
 const columns = [
     {

@@ -10,22 +10,15 @@
                 </p>
             </div>
             <div class="flex gap-3">
-                <UButton 
-                    color="primary" 
-                    icon="i-heroicons-plus-circle" 
-                    @click="onRegisterMatch"
-                >
+                <UButton color="primary" icon="i-heroicons-plus-circle" @click="onRegisterMatch">
                     Register Match
                 </UButton>
 
-                <UButton 
-                    color="neutral" 
-                    variant="outline" 
-                    icon="i-heroicons-clipboard" 
-                    @click="copyJoinCode"
-                >
-                    Copy Join Code
-                </UButton>
+                <UButton color="neutral" variant="outline" icon="i-heroicons-link" title="Share"
+                    @click="copyJoinCode" />
+
+                <UButton color="neutral" variant="outline" icon="heroicons:arrow-right-start-on-rectangle-solid"
+                    title="Leave group" @click="onLeaveGroup" />
             </div>
         </div>
         <GroupLeaderboard />
@@ -35,10 +28,11 @@
 </template>
 
 <script lang="ts" setup>
-import { RegisterMatchModal } from '#components';
+import { ConfirmModal, RegisterMatchModal } from '#components';
 
 const route = useRoute();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 const overlay = useOverlay();
 
 const groupId = route.params.id as string;
@@ -55,6 +49,12 @@ const matchRegisterModal = overlay.create(RegisterMatchModal, {
         groupId: groupId,
     },
 });
+const leaveGroupModal = overlay.create(ConfirmModal, {
+    props: {
+        title: "Leave group",
+        description: "Are you sure you want to leave this group?",
+    },
+});
 
 const onRegisterMatch = async () => {
     const registered = await matchRegisterModal.open()
@@ -67,6 +67,25 @@ const copyJoinCode = () => {
     navigator.clipboard.writeText(joinCode)
     // Optional: show toast or confirmation
     console.log(`Copied join code: ${joinCode}`);
+};
+
+const onLeaveGroup = async () => {
+    leaveGroupModal.open()
+        .then(async (confirmed) => {
+            if (confirmed) {
+                const { error } = await supabase.rpc('remove_member_from_group', {
+                    p_group_id: groupId,
+                    p_user_id: user.value.id,
+                });
+
+                if (error) {
+                    // Handle error (e.g., show a toast or alert)
+                    console.error(error.message);
+                } else {
+                    navigateTo("/groups");
+                }
+            }
+        });
 };
 
 </script>

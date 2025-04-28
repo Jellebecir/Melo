@@ -25,7 +25,6 @@ export const useCreateGroup = (): CreateGroup => {
             loading.value = false;
             return Promise.reject("Group name is required");
         }
-        console.log(await supabase.auth.getSession())
 
         return supabase.rpc("create_group", {
             name: groupName
